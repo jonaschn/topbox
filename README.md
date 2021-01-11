@@ -9,7 +9,7 @@ On Linux, this would look something like this:
 
 ``` shell
 $ cd ~
-$ git clone https://github.com/cmry/topbox
+$ git clone https://github.com/clips/topbox
 $ cd ~/topbox/box
 $ wget http://nlp.stanford.edu/software/tmt/tmt-0.4/tmt-0.4.0.jar
 $ cd ~
