@@ -48,7 +48,7 @@ class STMT(object):
 
     keep : boolean, optional, default True
         If set to False, will remove the data and scala files after training,
-        and will remove EVERYTHING after the resutls are obtained. This can
+        and will remove EVERYTHING after the results are obtained. This can
         be handy when running a quick topic model and save disk space. If
         you're running a big model and want to keep it after your session is
         done, it might be better to just leave it to True.
@@ -115,7 +115,7 @@ class STMT(object):
         Parameters
         ----------
         :mod: string
-            Either 'test' or 'train' for swithing states.
+            Either 'test' or 'train' for switching states.
         """
         self.scala(mod)
         call(["java", "-Xmx" + str(self.mem) + "m", "-jar", self.dir +
@@ -368,7 +368,7 @@ class STMT(object):
         self.cleanup(step='results')
         return y_true, y_score
 
-    def cleanup(self, rmall=False, step=False):
+    def cleanup(self, rmall=False, step=False, rmfall=False):
         """Cleanup module.
 
         If the user wants the trained model to be kept, it will only remove the
@@ -378,14 +378,27 @@ class STMT(object):
         Parameters
         ----------
         rmall : bool, optional, default False
-            Can be used to remove ALL files from box.
+            Can be used to remove ALL files from box if keep=False.
 
         step : bool, optional, default False
             Indicates the step so that it will keep the compressed and model
             files.
+
+        rmfall : bool, optional, default False
+            Can be used to remove ALL files from box even if keep=True.
         """
-        pattern = self.name + '_*' if not rmall else '*_*'
+        pattern = self.name + '_*' if not (rmall or rmfall) else '*_*'
         files = glob(self.dir + pattern)
+        print('Deleting files with pattern:', pattern)
+        print(files)
+        
+        if rmfall:
+            for f in files:
+                if path.isfile(f):
+                    remove(f)
+                elif path.isdir(f):
+                    rmtree(f)
+
         for f in files:
             if not self.keep and step != 'results':
                 rmtree(f) if '.' not in f else remove(f)
